@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bulk adding of LinkedIn Vanity Names</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Paste LinkedIn urls or Vanity Names</h2>
+      <div>
+        <textarea
+          id="vanityNamesInput"
+          placeholder="Enter LinkedIn Urls or vanity names on a new line"
+          rows="10"
+          cols="41"
+          style="text-align: left"
+        ></textarea>
+        <br />* tip: you can copy and paste a column from Excel and paste in this box above.
+      </div>
+      <button id="sendVanityNamesBtn">Add</button>
+
+      <div id="feedback" class="feedback" style="display: none"></div>
+    </div>
+    <script src="config.js"></script>
+    <script src="bulkupload.js"></script>
+  </body>
+</html>
