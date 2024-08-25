@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
     feedbackElement.textContent = message;
     feedbackElement.className = `feedback ${type}`;
     feedbackElement.style.display = "block";
-  
+
     setTimeout(() => {
       feedbackElement.style.display = "none";
     }, 5000);
@@ -92,16 +92,20 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((response) => {
           if (responseStatusCode === 200 || responseStatusCode === 201) {
             showUserFeedback("Code validation successful.");
-            chrome.storage.local.set({ userToken: response, userEmail: email }, function () {
-                chrome.runtime.sendMessage({ action: "logout" }, function(response) {
-                });
-
+            chrome.storage.local.set(
+              { userToken: response, userEmail: email });
+              chrome.runtime.sendMessage({ action: "logout" }, () => {
+                
               });
-              window.close();
-        
+            window.close();
           } else {
-            showUserFeedback(
-              "Failed to send verification code. Try again.");
+            if (responseStatusCode === 203) {
+              showUserFeedback(response);
+            }
+            else {
+            showUserFeedback("Failed to send verification code. Try again. " + responseStatusCode);
+          }
+
           }
         })
         .catch((error) => {

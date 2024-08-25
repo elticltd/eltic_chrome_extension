@@ -61,7 +61,8 @@ document.addEventListener("DOMContentLoaded", function () {
             FieldValue2: userToken,
           });
 
-          fetch(BASE_URL + "insertout/?id=&t=15", {
+          // Create a fetch request
+          const fetchRequest = fetch(BASE_URL + "insertout/?id=&t=15", {
             method: "POST",
             headers: {
               charset: "UTF-8",
@@ -69,28 +70,30 @@ document.addEventListener("DOMContentLoaded", function () {
               accept: "application/json",
             },
             body: formData,
-          })
+          });
+
+          // Create a timeout promise that resolves after 4 seconds
+          const timeout = new Promise((resolve) => {
+            setTimeout(resolve, 4000);
+          });
+
+          // Use Promise.race to race the fetch request against the timeout
+          await Promise.race([fetchRequest, timeout])
             .then((response) => {
-              responseStatusCode = response.status;
-              return response.json();
-            })
-            .then((response) => {
-              if (
-                responseStatusCode === 200 ||
-                responseStatusCode === 201 ||
-                responseStatusCode === 202
-              ) {
-                let message = response;
-                if (responseStatusCode === 202) {
-                  showUserFeedback(message.replace(/"/g, ""));
-                } else {
-                  showUserFeedback("Added to Watchlist");
-                  chrome.runtime.sendMessage(
-                    { action: "logout" },
-                    function (response) {}
-                  );
-                  window.close();
-                }
+              if (response && response.ok) {
+                response.json().then((data) => {
+                  let message = data;
+                  if (response.status === 202) {
+                    showUserFeedback(message.replace(/"/g, ""));
+                  } else {
+                    showUserFeedback("Added to Watchlist");
+                    chrome.runtime.sendMessage(
+                      { action: "logout" },
+                      function (response) {}
+                    );
+                    window.close();
+                  }
+                });
               } else {
                 showUserFeedback("Failed to send data. Try again.");
               }
@@ -98,6 +101,11 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch((error) => {
               showUserFeedback("Error submitting. Try again later.");
             });
+
+          // Close the window after 4 seconds, regardless of the fetch outcome
+          setTimeout(() => {
+            window.close();
+          }, 4000);
         }
       } catch (error) {
         console.log("Error:", error);
@@ -110,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     }
   });
+
 
   function showUserFeedback(message, type = "info") {
     feedback.textContent = message;

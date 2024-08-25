@@ -1,1 +1,1 @@
-const BASE_URL = "https://localhost:7242/api/";
+const BASE_URL = "https://api.eltic.io/api/";

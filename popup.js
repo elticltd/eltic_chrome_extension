@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "logout") {
       updateUIBasedOnLoginStatus();
+      updateWatchlistCount();
     }
   });
 
@@ -170,7 +171,7 @@ async function addToWatchlist() {
         }
 
       } else {
-        showUserFeedback("Failed to add to Watchlist, please try again.");
+        showUserFeedback("Please ensure you are on a LinkedIn Profile page.");
       }
     } else {
       showUserFeedback("Please log in first.");
@@ -179,7 +180,7 @@ async function addToWatchlist() {
     updateWatchlistCount();
   } catch (error) {
     console.log("Error adding to watchlist:", error);
-    showUserFeedback("Failed to add to watchlist. Please try again.", "error");
+    showUserFeedback("Please ensure you are on a LinkedIn Profile page", "error");
   }
 }
 
@@ -196,8 +197,8 @@ function openSettings() {
   chrome.windows.create({
     url: chrome.runtime.getURL("settings.html"),
     type: "popup",
-    width: 600,
-    height: 250,
+    width: 450,
+    height: 400,
   });
 }
 
